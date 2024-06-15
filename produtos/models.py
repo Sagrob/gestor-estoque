@@ -1,9 +1,73 @@
 from django.db import models
+from utils.base_models import BaseModel
 
-class Fornecedor(models.Model):
+class Embalagem(models.Model):
+    name = models.CharField(
+        max_length=50,
+        verbose_name='Nome da embalagem',
+    )
+    sigla = models.CharField(
+        max_length=3,
+        verbose_name='Sigla da embalagem',
+    )
+    
+    class Meta:
+        db_table = 'embalagem'
+
+class Local(BaseModel):
+    TIPOS_DE_LOCAL = [
+        ('F', 'Físico'),
+        ('D', 'Digital')
+    ]
+    nome = models.CharField(
+        max_length=50,
+        verbose_name='Nome do local armazenado',
+        unique=True
+    )
+    tipo = models.CharField(
+        max_length=1,
+        choices=TIPOS_DE_LOCAL,
+        verbose_name='Tipo do local movimentado'
+    )
+    class Meta:
+        db_table = 'locais'
+
+class Movimentacao(BaseModel):
+    TIPOS_MOVIMENTACAO = [
+        (1, 'Entrada'),
+        (-1, 'Saída'),
+    ]
+    produto = models.ForeignKey(
+        'produtos.Produto',
+        on_delete=models.CASCADE,
+        verbose_name='Produto da movimentação',
+    )
+    fornecedor = models.ForeignKey(
+        'produtos.Fornecedor',
+        on_delete=models.CASCADE,
+        verbose_name='Fornecedor do produto movimentado'
+    )
+    quantidade = models.DecimalField(
+        max_digits=10,
+        decimal_places=6,
+        verbose_name='Quantidade movimentada'
+    )
+    local = models.ForeignKey(
+        'produtos.Local',
+        on_delete=models.CASCADE,
+        verbose_name='Local da movimentação',
+    )
+    tipo = models.IntegerField(
+        choices=TIPOS_MOVIMENTACAO,
+    )
+    class Meta:
+        db_table = 'movimentacao'
+
+class Fornecedor(BaseModel):
     nome_social = models.CharField(
         max_length=100,
-        verbose_name='Razão Social do Fornecedor'
+        verbose_name='Razão Social do Fornecedor',
+        unique=True
     )
     nome_fantasia = models.CharField(
         max_length=100,
@@ -13,51 +77,12 @@ class Fornecedor(models.Model):
     produtos = models.ManyToManyField(
         'produtos.Produto',
         verbose_name='Produtos do Fornecedor',
-        through='FornecedorProduto',
-    )
-
-    data_criacao = models.DateTimeField(
-        auto_now_add=True,
-        verbose_name='data de criação do fornecedor'
-    )
-    data_atualizacao = models.DateTimeField(
-        auto_now=True,
-        verbose_name='data de atualização do fornecedor'
     )
     
     class Meta:
-        tb_table = 'fornecedores'
+        db_table = 'fornecedores'
 
-class FornecedorProduto(models.Model):
-    fornecedor = models.ForeignKey(
-        Fornecedor,
-        on_delete=models.CASCADE,
-        verbose_name='Produto do Fornecedor'
-    )
-    produto = models.ForeignKey(
-        'produtos.Produto',
-        on_delete=models.CASCADE,
-        verbose_name='Produto do Fornecedor'
-    )
-    preco = models.DecimalField(
-        max_digits=10,
-        decimal_places=2,
-        verbose_name='Preço do Produto'
-    )
-    
-    data_criacao = models.DateTimeField(
-        auto_now_add=True,
-        verbose_name='data de criação'
-    )
-    data_atualizacao = models.DateTimeField(
-        auto_now=True,
-        verbose_name='data de atualização'
-    )
-    
-    class Meta:
-        tb_table = 'fornecedor_produto'
-
-class Produto(models.Model):
+class Produto(BaseModel):
     nome = models.CharField(
         max_length=100,
         verbose_name='nome do produto'
@@ -68,34 +93,20 @@ class Produto(models.Model):
         on_delete=models.CASCADE,
         verbose_name='categoria do produto'
     )
+    embalagem = models.ManyToManyField(
+        'produtos.Embalagem',
+        verbose_name='Embalagens do produto'
+    )
 
-    data_criacao = models.DateTimeField(
-        auto_now_add=True,
-        verbose_name='data de criação do produto'
-    )
-    data_atualizacao = models.DateTimeField(
-        auto_now=True,
-        verbose_name='data de atualização do produto'
-    )
-    
     class Meta:
-        tb_table='produtos'
+        db_table='produtos'
 
 
-class Categoria(models.Models):
+class Categoria(BaseModel):
     nome = models.CharField(
         max_length=100,
         verbose_name='nome da categoria'
     )
     
-    data_criacao = models.DateTimeField(
-        auto_now_add=True,
-        verbose_name='data de criação da categoria'
-    )
-    data_atualizacao = models.DateTimeField(
-        auto_now=True,
-        verbose_name='data de atualização da categoria'
-    )
-
     class Meta:
-        tb_table = 'categorias'
+        db_table = 'categorias'
