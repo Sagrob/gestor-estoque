@@ -1,0 +1,4 @@
+-r requisitos.txt
+
+ruff
+taskipy
