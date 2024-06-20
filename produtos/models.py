@@ -1,5 +1,7 @@
 from django.db import models
+
 from utils.base_models import BaseModel
+
 
 class Embalagem(models.Model):
     name = models.CharField(
@@ -10,27 +12,25 @@ class Embalagem(models.Model):
         max_length=3,
         verbose_name='Sigla da embalagem',
     )
-    
+
     class Meta:
         db_table = 'embalagem'
 
+
 class Local(BaseModel):
-    TIPOS_DE_LOCAL = [
-        ('F', 'Físico'),
-        ('D', 'Digital')
-    ]
+    TIPOS_DE_LOCAL = [('F', 'Físico'), ('D', 'Digital')]
     nome = models.CharField(
-        max_length=50,
-        verbose_name='Nome do local armazenado',
-        unique=True
+        max_length=50, verbose_name='Nome do local armazenado', unique=True
     )
     tipo = models.CharField(
         max_length=1,
         choices=TIPOS_DE_LOCAL,
-        verbose_name='Tipo do local movimentado'
+        verbose_name='Tipo do local movimentado',
     )
+
     class Meta:
         db_table = 'locais'
+
 
 class Movimentacao(BaseModel):
     TIPOS_MOVIMENTACAO = [
@@ -45,12 +45,10 @@ class Movimentacao(BaseModel):
     fornecedor = models.ForeignKey(
         'produtos.Fornecedor',
         on_delete=models.CASCADE,
-        verbose_name='Fornecedor do produto movimentado'
+        verbose_name='Fornecedor do produto movimentado',
     )
     quantidade = models.DecimalField(
-        max_digits=10,
-        decimal_places=6,
-        verbose_name='Quantidade movimentada'
+        max_digits=10, decimal_places=6, verbose_name='Quantidade movimentada'
     )
     local = models.ForeignKey(
         'produtos.Local',
@@ -59,54 +57,64 @@ class Movimentacao(BaseModel):
     )
     tipo = models.IntegerField(
         choices=TIPOS_MOVIMENTACAO,
+        verbose_name='Tipo de movimentação'
     )
+    preco = models.DecimalField(
+        max_digits=10,
+        decimal_places=6,
+        verbose_name='Preço do produto na movimentação'
+    )
+    codigo_fabricante = models.CharField(
+        max_length=20,
+        verbose_name='Código do fabricante',
+    )
+
     class Meta:
         db_table = 'movimentacao'
 
+
 class Fornecedor(BaseModel):
     nome_social = models.CharField(
-        max_length=100,
-        verbose_name='Razão Social do Fornecedor',
-        unique=True
+        max_length=100, verbose_name='Razão Social do Fornecedor', unique=True
     )
     nome_fantasia = models.CharField(
-        max_length=100,
-        verbose_name='Nome Fantasia do Fornecedor'
+        max_length=100, verbose_name='Nome Fantasia do Fornecedor'
     )
-    
+
     produtos = models.ManyToManyField(
         'produtos.Produto',
         verbose_name='Produtos do Fornecedor',
     )
-    
+
     class Meta:
         db_table = 'fornecedores'
+
 
 class Produto(BaseModel):
     nome = models.CharField(
         max_length=100,
         verbose_name='nome do produto'
     )
-    
     categoria = models.ForeignKey(
         'produtos.Categoria',
         on_delete=models.CASCADE,
-        verbose_name='categoria do produto'
+        verbose_name='categoria do produto',
     )
     embalagem = models.ManyToManyField(
-        'produtos.Embalagem',
-        verbose_name='Embalagens do produto'
+        'produtos.Embalagem', verbose_name='Embalagens do produto'
     )
-
+    estoque_minimo = models.FloatField(
+        verbose_name='Estoque Mínimo do Produto',
+    )
+    estoque_maximo = models.FloatField(
+        verbose_name='Estoque Máximo do Produto',
+    )
     class Meta:
-        db_table='produtos'
+        db_table = 'produtos'
 
 
 class Categoria(BaseModel):
-    nome = models.CharField(
-        max_length=100,
-        verbose_name='nome da categoria'
-    )
-    
+    nome = models.CharField(max_length=100, verbose_name='nome da categoria')
+
     class Meta:
         db_table = 'categorias'
