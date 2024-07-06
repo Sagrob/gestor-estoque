@@ -3,20 +3,13 @@
 {% block content %}
 <div class="container mt-5">
     <div class="d-flex justify-content-between align-items-center mb-4">
-        <h2>Lista de Locais</h2>
-        <a href="{% url 'adicionar_local' %}" class="btn btn-success">Adicionar Local</a>
+        <h2>Lista de Categorias</h2>
+        <a href="{% url 'adicionar_categorias' %}" class="btn btn-success">Adicionar Categoria</a>
     </div>
     <form method="get" class="mb-4">
         <div class="row">
             <div class="col-md-4">
                 <input type="text" name="q" class="form-control" placeholder="Pesquisar por nome" value="{{ request.GET.q }}">
-            </div>
-            <div class="col-md-4">
-                <select name="tipo" class="form-control">
-                    <option value="">Todos</option>
-                    <option value="F" {% if request.GET.tipo == "F" %}selected{% endif %}>Físico</option>
-                    <option value="D" {% if request.GET.tipo == "D" %}selected{% endif %}>Digital</option>
-                </select>
             </div>
             <div class="col-md-4">
                 <button type="submit" class="btn btn-primary">Filtrar</button>
@@ -28,17 +21,17 @@
             <thead class="thead-dark">
                 <tr>
                     <th>Nome</th>
-                    <th>Tipo</th>
+                    <th></th>
+                    
                 </tr>
             </thead>
             <tbody>
-                {% for local in locais %}
+                {% for categoria in categorias %}
                 <tr>
-                    <td>{{ local.nome }}</td>
-                    <td>{{ local.tipo }}</td>
+                    <td>{{ categoria.nome }}</td>
                     <td class="text-end">
-                        <a href="{% url 'editar_locais' local.id %}" class="btn btn-warning btn-sm">Editar</a>
-                        <a href="{% url 'excluir_locais' local.id %}" class="btn btn-danger btn-sm">Excluir</a>
+                        <a href="{% url 'editar_categorias' categoria.id %}" class="btn btn-warning btn-sm">Editar</a>
+                        <a href="{% url 'excluir_categorias' categoria.id %}" class="btn btn-danger btn-sm">Excluir</a>
                     </td>
                 </tr>
                 {% endfor %}

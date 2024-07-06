@@ -1,0 +1,13 @@
+{% extends 'base.html' %}
+
+{% block content %}
+  <h1>Excluir Fornecedores</h1>
+  <ul>
+    {% for fornecedor in fornecedores %}
+      <li>
+        {{ fornecedor.nome }} ({{ fornecedor.produtos }})
+        <a href="{% url 'excluir_fornecedores' fornecedor.pk %}">Excluir</a>
+      </li>
+    {% endfor %}
+  </ul>
+{% endblock %}

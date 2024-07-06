@@ -29,6 +29,10 @@
                 <tr>
                     <td>{{ embalagem.nome }}</td>
                     <td>{{ embalagem.sigla }}</td>
+                    <td class="text-end">
+                        <a href="{% url 'editar_embalagens' embalagem.id %}" class="btn btn-warning btn-sm">Editar</a>
+                        <a href="{% url 'excluir_embalagens' embalagem.id %}" class="btn btn-danger btn-sm">Excluir</a>
+                    </td>
                 </tr>
                 {% endfor %}
             </tbody>
