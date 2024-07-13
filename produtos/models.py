@@ -16,6 +16,9 @@ class Embalagem(models.Model):
     class Meta:
         db_table = 'embalagem'
 
+    def __str__(self) -> str:
+        return f'{self.nome} - {self.sigla}'
+
 
 class Local(BaseModel):
     TIPOS_DE_LOCAL = [('F', 'Físico'), ('D', 'Digital')]
@@ -112,9 +115,15 @@ class Produto(BaseModel):
     class Meta:
         db_table = 'produtos'
 
+    def __str__(self) -> str:
+        return f"{self.nome} - {self.categoria} - {self.embalagem} - {self.estoque_minimo} - {self.estoque_maximo}"  # noqa: E501
+
 
 class Categoria(BaseModel):
     nome = models.CharField(max_length=100, verbose_name='nome da categoria')
 
     class Meta:
         db_table = 'categorias'
+
+    def __str__(self) -> str:
+        return f"{self.nome}"
